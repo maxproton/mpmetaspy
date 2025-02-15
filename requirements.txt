@@ -1,0 +1,5 @@
+python-dotenv
+jinja2
+beautifulsoup4
+piexif
+exifread
