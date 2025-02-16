@@ -1,6 +1,7 @@
 import argparse
 import banner
 import module_image
+from tqdm import tqdm
 
 metadata_images = {}
 
@@ -14,10 +15,12 @@ if __name__ == '__main__':
     print(banner.banner)
     args = parse_arguments()
     image_urls = module_image.scrape_images_from_file(args.file)
-    for url in image_urls:
-        meta_data_capture = module_image.image_meta(url, args.verbose)
-        if meta_data_capture != None:
-            metadata_images[url] = meta_data_capture
+    with tqdm(total=len(image_urls), desc="Processing Images", unit="img") as pbar:
+        for url in image_urls:
+            meta_data_capture = module_image.image_meta(url, args.verbose)
+            if meta_data_capture != None:
+                metadata_images[url] = meta_data_capture
+            pbar.update(1)
 
     data = {
         'title': f"MPMetaSpy report.",
