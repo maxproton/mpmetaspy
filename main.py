@@ -9,6 +9,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Process a file and perform operations on its lines.")
     parser.add_argument("-d", "--file", type=str, required=True, help="File containing urls")
     parser.add_argument("-v", "--verbose", action="store_true", help="Shows you everything!")
+    parser.add_argument("-c", "--csv", action="store_true", required=False,
+                        help="Generates a report in csv format")
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -22,8 +24,11 @@ if __name__ == '__main__':
                 metadata_images[url] = meta_data_capture
             pbar.update(1)
 
-    data = {
-        'title': f"MPMetaSpy report.",
-        'images': metadata_images,
-    }
-    report_title = module_image.generate_summary(data)
+    if args.csv:
+        module_image.generate_csv_summary(metadata_images)
+    else:
+        data = {
+            'title': f"MPMetaSpy report.",
+            'images': metadata_images,
+        }
+        report_title = module_image.generate_summary(data)

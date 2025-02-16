@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from jinja2 import FileSystemLoader, Environment
-
+import csv
 
 def extract_images(url):
     try:
@@ -117,3 +117,24 @@ def generate_summary(data):
         f.write(output)
 
     return f"reports/report{formatted_time}.html"
+
+def generate_csv_summary(data):
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%Y%m%d")
+    with (open(f"reports/report{formatted_time}.csv", "w", newline="") as file):
+        writer = csv.DictWriter(file, fieldnames=["URL", "ATTRIBUTE", "VALUE", "ALERT"])
+        writer.writeheader()  # Write column headers
+        for url, meta_data in data.items():
+            if meta_data != None:
+                for attribute, data_value in meta_data.items():
+                    alert = ""
+                    if attribute == "location":
+                        alert = "!!LOCATION!!"
+
+                    row = {
+                        "URL": url,
+                        "ATTRIBUTE": attribute,
+                        "VALUE": data_value,
+                        "ALERT": alert
+                    }
+                    writer.writerow(row)
